@@ -1,0 +1,15 @@
+{
+  "name": "libencrypt",
+  "version": "0.0.1",
+  "description": "Javascript Encrytion SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "Ziyad Parekh",
+  "license": "ISC",
+  "dependencies": {
+    "kbpgp": "^2.0.50",
+    "q": "^1.4.1"
+  }
+}
