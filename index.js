@@ -26,10 +26,10 @@ class Encryptor {
 
   encrypt(params) {
     var def = mkDeferred();
-    if (!params.msg &&
-        !params.encrypt_for &&
-        !params.sign_with &&
-        !params.encrypt_for instanceof this.kbpgp.KeyManager &&
+    if (!params.msg ||
+        !params.encrypt_for ||
+        !params.sign_with ||
+        !params.encrypt_for instanceof this.kbpgp.KeyManager ||
         !params.sign_with instanceof this.kbpgp.KeyManager) 
     {
       def.reject(new Error("Invalid arguments to encrypt"));
@@ -46,8 +46,8 @@ class Encryptor {
 
   sign(params) {
     var def = mkDeferred();
-    if (!params.msg &&
-        !params.sign_with &&
+    if (!params.msg ||
+        !params.sign_with ||
         !params.sign_with instanceof this.kbpgp.KeyManager)
     {
       def.reject(new Error("Invalid arguments to sign")); 
