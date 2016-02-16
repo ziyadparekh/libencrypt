@@ -4,12 +4,16 @@
   "description": "Javascript Encrytion SDK",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "./node_modules/.bin/mocha -t 10000 --reporter spec"
   },
   "author": "Ziyad Parekh",
   "license": "ISC",
   "dependencies": {
     "kbpgp": "^2.0.50",
     "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
   }
 }
