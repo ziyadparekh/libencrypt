@@ -13,19 +13,15 @@ class Encryptor {
     this.pubKeyPath = args.pubKeyPath;
     this.passphrase = args.passphrase;
 
-    if (!this.privKeyPath || 
-        !fs.statSync(this.privKeyPath)) {
-      throw Error("Please provide path to private key file");
-    }
-
     if (!this.pubKeyPath || 
         !fs.statSync(this.pubKeyPath)) {
       throw Error("Please provide path to public key file");
     }
 
     this.publicKey = fs.readFileSync(this.pubKeyPath, 'utf8');
-    this.privateKey = fs.readFileSync(this.privKeyPath, 'utf8');
-
+    if (this.privKeyPath) {
+      this.privateKey = fs.readFileSync(this.privKeyPath, 'utf8'); 
+    }
   }
 
   encrypt(params) {
@@ -48,12 +44,30 @@ class Encryptor {
     return def.getPromise();
   }
 
+  sign(params) {
+    var def = mkDeferred();
+    if (!params.msg &&
+        !params.sign_with &&
+        !params.sign_with instanceof this.kbpgp.KeyManager)
+    {
+      def.reject(new Error("Invalid arguments to sign")); 
+    }
+    this.kbpgp.box(params, function (err, result_string, result_buffer) {
+      if (err) {
+        def.reject(new Error("Unable to sign payload"));
+      } else {
+        def.resolve(result_string);
+      }
+    });
+    return def.getPromise();
+  }
+
   decrypt(msg, decryptor, encryptor) {
     var def = mkDeferred();
     var keyring = new this.kbpgp.keyring.KeyRing;
-    if (!decryptor &&
-        !encryptor &&
-        !decryptor instanceof this.kbpgp.KeyManager &&
+    if (!decryptor ||
+        !encryptor ||
+        !decryptor instanceof this.kbpgp.KeyManager ||
         !encryptor instanceof this.kbpgp.KeyManager)
     {
       def.reject(new Error("Decryptor and Encryptor missing"));
@@ -76,7 +90,7 @@ class Encryptor {
   loadKeyManager() {
     var def = mkDeferred();
     this.kbpgp.KeyManager.import_from_armored_pgp({
-      armored: this.privateKey
+      armored: this.privateKey || this.publicKey
     }, function (err, keyManager) {
       if (err) {
         def.reject(new Error("Error Loading KeyManager"));
