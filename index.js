@@ -3,7 +3,6 @@
 var fs = require('fs');
 var mkDeferred = require("./lib/deferred");
 var kbpgp = require("kbpgp");
-var master_passphrase = new Buffer('so long and thanks for all the fish', "utf8");
 
 class Encryptor {
   constructor(args) {
